@@ -1,0 +1,2752 @@
+resources:
+  - url: /local/custom_ui/weather-card.js
+    type: js
+  - url: /local/custom_ui/gauge-card.js?v=1
+    type: js
+  - url: /local/custom_ui/thermostat-card.js?v=2
+    type: module
+  - url: /local/custom_ui/dark-sky-weather-card.js?v=10
+    type: js
+  - url: /local/custom_ui/weather-card-mini.js?v=2
+    type: js
+  - url: /local/custom_ui/button-card.js
+    type: module
+  - url: /local/custom_ui/mini-media-player.js?v=2
+    type: module
+  - url: /local/custom_ui/slider-entity-row.js
+    type: js
+  - url: /local/custom_ui/card-modder.js
+    type: js
+
+#################################################################################
+#                      VIEWS - HOME                                             #
+#################################################################################
+name: My Home
+views:
+  - title: Home
+    cards:
+#################################################################################
+#                      SCENE CONTROL                                            #
+#################################################################################
+      - type: glance
+        #title: Scenes
+        show_state: false
+        entities:
+          - entity: input_boolean.home_scene
+            name: Home
+            tap_action: toggle
+          - entity: input_boolean.away_scene
+            name: Away
+            tap_action: toggle
+          - entity: input_boolean.sleep_scene
+            name: Sleep
+            tap_action: toggle
+          - entity: input_boolean.vacation_scene
+            name: Vacation
+            tap_action: toggle
+          - entity: input_boolean.more_scenes
+            name: More
+            tap_action: toggle
+      - type: conditional
+        conditions:
+          - entity: input_boolean.more_scenes
+            state: "on"
+        card:
+          type: vertical-stack
+          cards:
+            - type: glance
+              show_state: false
+              entities:
+                - entity: input_boolean.guest_mode_bedroom
+                  name: Guest
+                  tap_action: toggle
+                - entity: input_boolean.dinner_scene
+                  name: Dinner
+                  tap_action: toggle
+                - entity: input_boolean.movie_scene
+                  name: Movie
+                  tap_action: toggle
+            - type: glance
+              show_state: true
+              column_width: calc(100% / 3)
+              entities:
+                - entity: binary_sensor.bedroom_occupancy
+                  name: Bedroom
+                - entity: binary_sensor.office_occupancy
+                  name: Office
+                - entity: binary_sensor.guest_room_occupancy
+                  name: Guest Room
+                - entity: binary_sensor.ecobee_occupancy
+                  name: Lower Hallway
+                - entity: binary_sensor.kitchen_occupancy
+                  name: Living Room
+                - entity: binary_sensor.basement_occupancy
+                  name: Basement
+                - entity: sensor.netatmo_station_co2
+                  name: CO2
+                - entity: sensor.ecobee_humidity
+                  name: Downstairs Humidity
+                - entity: sensor.netatmo_station_humidity
+                  name: Upstairs Humidity
+#################################################################################
+#                      HIDE OPTIONS                                             #
+#################################################################################
+      - type: conditional
+        conditions:
+          - entity: input_boolean.more_scenes
+            state: "on"
+        card:
+          type: glance
+          show_state: true
+          column_width: calc(100% / 3)
+          entities:
+            - entity: input_boolean.hide_bedroom
+              icon: mdi:hotel
+              tap_action: toggle
+            - entity: input_boolean.hide_living_room
+              icon: mdi:sofa
+              tap_action: toggle
+            - entity: input_boolean.hide_basement
+              icon: mdi:television
+              tap_action: toggle
+######################################################################################################
+#                      DISTANCE FROM ANJA TO JEREMY                                                  #
+######################################################################################################
+      - type: conditional
+        conditions:
+          - entity: input_boolean.push_notification_distance_anja_to_jeremy
+            state: "on"
+        card:
+          type: vertical-stack
+          cards:
+            - type: picture-elements
+              image: /local/ui-lovelace/blank.png
+              elements:
+                - type: image
+                  camera_image: camera.street_view_anja_gps
+                  style:
+                    top: 50%
+                    left: 50%
+                    height: 100%
+                    width: 100%
+                - type: image
+                  image: /local/ui-lovelace/status-bar.png
+                  style:
+                    top: 50%
+                    left: 50%
+                    height: 100%
+                    width: 100%
+                - type: state-badge
+                  entity: sensor.google_travel_time_anja_to_jeremy
+                  name: ETA
+                  style:
+                    top: 40%
+                    left: 10%
+                    font-size: 12px
+                - type: icon
+                  entity: input_boolean.unlock_front_door_upon_arrival
+                  icon: mdi:door
+                  tap_action: toggle
+                  style:
+                    top: 80%
+                    left: 10%
+                    color: white
+                    font-size: 14px
+                    font-weight: 'bold'
+                - type: icon
+                  entity: input_boolean.push_notification_distance_anja_to_jeremy
+                  icon: mdi:close-circle
+                  tap_action: toggle
+                  style:
+                    top: 10%
+                    left: 95%
+                    font-size: 14px
+                    font-weight: 'bold'
+######################################################################################################
+#                      AIR QUALITY                                                                   #
+######################################################################################################
+      - type: conditional
+        conditions:
+          - entity: binary_sensor.display_air_quality
+            state: "on"
+          - entity: input_boolean.dismiss_air_quality
+            state: "off"
+        card:
+          type: vertical-stack
+          cards:
+            - type: picture-elements
+              image: /local/ui-lovelace/air_quality.jpg
+              elements:
+                - type: state-label
+                  entity: sensor.netatmo_station_co2
+                  style:
+                    top: 40%
+                    left: 25%
+                    font-size: 35px
+                    color: 'White'
+                    font-weight: 'bold'
+                - type: state-label
+                  entity: sensor.us_air_quality_index
+                  style:
+                    top: 40%
+                    left: 75%
+                    font-size: 35px
+                    color: 'White'
+                    font-weight: 'bold'
+                    #text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+                - type: state-label
+                  entity: sensor.blank
+                  prefix: 'Indoor CO2 '
+                  style:
+                    top: 70%
+                    left: 25%
+                    font-size: 18px
+                    color: 'White'
+                    font-weight: 'bold'
+                    #text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+                - type: state-label
+                  entity: sensor.blank
+                  prefix: 'Outdoor Air Quality'
+                  style:
+                    top: 70%
+                    left: 75%
+                    font-size: 18px
+                    color: 'White'
+                    font-weight: 'bold'
+                    #text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+                - type: icon
+                  entity: input_boolean.dismiss_air_quality
+                  icon: mdi:close-circle
+                  tap_action: toggle
+                  style:
+                    top: 10%
+                    left: 95%
+                    font-size: 14px
+                    font-weight: 'bold'
+######################################################################################################
+#                      CALENDAR                                                                      #
+######################################################################################################
+      - type: conditional
+        conditions:
+          - entity: binary_sensor.display_calendar_jeremy
+            state: "on"
+          - entity: input_boolean.vacation_scene
+            state: "off"
+        card:
+          type: vertical-stack
+          cards:
+            - type: picture-elements
+              image: /local/ui-lovelace/blank.png
+              elements:
+                - type: image
+                  camera_image: camera.street_view_jeremy_calendar
+                  style:
+                    top: 50%
+                    left: 50%
+                    height: 100%
+                    width: 100%
+                - type: image
+                  image: /local/ui-lovelace/status-bar.png
+                  style:
+                    top: 50%
+                    left: 50%
+                    height: 100%
+                    width: 100%
+                - type: state-badge
+                  entity: sensor.google_travel_time_jeremy
+                  style:
+                    top: 30%
+                    left: 10%
+                    font-size: 12px
+                - type: state-badge
+                  entity: binary_sensor.weather_icon
+                  style:
+                    top: 30%
+                    left: 90%
+                    font-size: 12px
+                - type: state-label
+                  entity: sensor.cal_title_jeremy
+                  style:
+                    top: 80%
+                    left: 50%
+                    color: white
+                    font-size: 14px
+                    font-weight: 'bold'
+                - type: state-label
+                  entity: sensor.cal_location_jeremy
+                  style:
+                    top: 88%
+                    left: 50%
+                    color: white
+                    font-size: 14px
+                - type: state-label
+                  entity: sensor.dark_sky_minutely_summary
+                  style:
+                    top: 95%
+                    left: 50%
+                    color: white
+                    font-size: 14px
+            - type: conditional
+              conditions:
+                - entity: binary_sensor.display_calendar_anja
+                  state: "off"
+                - entity: input_boolean.vacation_scene
+                  state: "off"
+              card:
+                type: "custom:weather-card-mini"
+                entity_weather: weather.openweathermap
+                entity_sun: sun.sun
+      - type: conditional
+        conditions:
+          - entity: binary_sensor.display_calendar_anja
+            state: "on"
+          - entity: input_boolean.vacation_scene
+            state: "off"
+        card:
+          type: vertical-stack
+          cards:
+            - type: picture-elements
+              image: /local/ui-lovelace/blank.png
+              elements:
+                - type: image
+                  camera_image: camera.street_view_anja_calendar
+                  style:
+                    top: 50%
+                    left: 50%
+                    height: 100%
+                    width: 100%
+                - type: image
+                  image: /local/ui-lovelace/status-bar.png
+                  style:
+                    top: 50%
+                    left: 50%
+                    height: 100%
+                    width: 100%
+                - type: state-badge
+                  entity: sensor.google_travel_time_anja
+                  style:
+                    top: 30%
+                    left: 10%
+                    font-size: 12px
+                - type: state-badge
+                  entity: binary_sensor.weather_icon
+                  style:
+                    top: 30%
+                    left: 90%
+                    font-size: 12px
+                - type: state-label
+                  entity: sensor.cal_title_anja
+                  style:
+                    top: 80%
+                    left: 50%
+                    color: white
+                    font-size: 14px
+                    font-weight: 'bold'
+                - type: state-label
+                  entity: sensor.cal_location_anja
+                  style:
+                    top: 88%
+                    left: 50%
+                    color: white
+                    font-size: 14px
+                - type: state-label
+                  entity: sensor.dark_sky_minutely_summary
+                  style:
+                    top: 95%
+                    left: 50%
+                    color: white
+                    font-size: 14px
+            - type: "custom:weather-card-mini"
+              entity_weather: weather.openweathermap
+              entity_sun: sun.sun
+######################################################################################################
+#                      BASEMENT DYNAMIC CONTROLS                                                     #
+######################################################################################################
+      - type: conditional
+        conditions:
+          - entity: input_boolean.home_scene
+            state: "on"
+          - entity: binary_sensor.display_basement_dynamic_controls
+            state: "on"
+          - entity: input_boolean.hide_basement
+            state: "off"
+        card:
+          type: vertical-stack
+          cards:
+            - type: entities
+              show_header_toggle: false
+              title: Basement
+              entities:
+                - entity: input_number.denon_volume
+                - entity: group.basement_ceiling
+                  icon: mdi:lightbulb
+                - entity: light.basement_floor_lamp
+                  icon: mdi:floor-lamp
+            - type: horizontal-stack
+              cards:
+                - type: "custom:button-card"
+                  entity: switch.media_center
+                  icon: mdi:apple
+                  color_type: card
+                  color: var(--primary-color) #cool green color rgb(223, 255, 97)
+                  color_off: var(--dark-background-color)
+                - type: "custom:button-card"
+                  entity: switch.fire_tv_basement
+                  icon: mdi:amazon
+                  color_type: card
+                  color: var(--primary-color) #cool green color rgb(223, 255, 97)
+                  color_off: var(--dark-background-color)
+                - type: "custom:button-card"
+                  entity: switch.xbox
+                  icon: mdi:xbox
+                  color_type: card
+                  color: var(--primary-color) #cool green color rgb(223, 255, 97)
+                  color_off: var(--dark-background-color)
+                - type: "custom:button-card"
+                  entity: switch.wii_u
+                  icon: mdi:wiiu
+                  color_type: card
+                  color: var(--primary-color) #cool green color rgb(223, 255, 97)
+                  color_off: var(--dark-background-color)
+                # - type: "custom:button-card"
+                #   entity: switch.basement_sonos
+                #   icon: mdi:itunes
+                #   color_type: card
+                #   color: var(--primary-color) #cool green color rgb(223, 255, 97)
+                #   color_off: var(--dark-color)
+            - type: conditional
+              conditions:
+                - entity: media_player.fire_tv_basement
+                  state: "playing"
+              card:
+                type: media-control
+                entity: media_player.fire_tv_basement
+            - type: conditional
+              conditions:
+                - entity: media_player.plex_fire_tv
+                  state: "playing"
+              card:
+                type: media-control
+                entity: media_player.plex_fire_tv
+      - type: conditional
+        conditions:
+          - entity: media_player.sonos_basement
+            state: "playing"
+          - entity: input_boolean.announcement_running
+            state: "off"
+        card:
+          type: custom:mini-media-player
+          entity: media_player.sonos_basement
+          name: Basement
+          artwork: cover
+          hide_power: true
+          hide_volume: false
+          show_source: true
+          icon: mdi:itunes
+          show_progress: true
+          scroll_info: true
+          max_volume: 30
+          artwork_border: true
+
+######################################################################################################
+#                      LIVING ROOM DYNAMIC CONTROLS                                                  #
+######################################################################################################
+      - type: conditional
+        conditions:
+          - entity: input_boolean.home_scene
+            state: "on"
+          - entity: binary_sensor.display_living_room_dynamic_controls
+            state: "on"
+          - entity: input_boolean.hide_living_room
+            state: "off"
+        card:
+          type: vertical-stack
+          cards:
+            - type: entities
+              show_header_toggle: false
+              title: Living Room
+              entities:
+                - entity: group.floor_lamp_lights
+                  icon: mdi:floor-lamp
+                  name: Floor Lamp
+                - entity: light.kitchen
+                  icon: mdi:lightbulb-outline
+                - entity: input_number.living_room_blinds
+                  name: Blinds
+            - type: horizontal-stack
+              cards:
+                - type: "custom:button-card"
+                  entity: switch.plex
+                  icon: mdi:plex
+                  color_type: card
+                  color: var(--primary-color) #cool green color rgb(223, 255, 97)
+                  color_off: var(--dark-background-color)
+                # - type: "custom:button-card"
+                #   entity: switch.jw_broadcasting
+                #   icon: mdi:book
+                #   color_type: card
+                #   color: var(--primary-color) #cool green color rgb(223, 255, 97)
+                #   #name: JW
+                - type: "custom:button-card"
+                  entity: switch.netflix
+                  icon: mdi:netflix
+                  color_type: card
+                  color: var(--primary-color) #cool green color rgb(223, 255, 97)
+                  color_off: var(--dark-background-color)
+                - type: "custom:button-card"
+                  entity: switch.youtube
+                  icon: mdi:youtube
+                  color_type: card
+                  color: var(--primary-color) #cool green color rgb(223, 255, 97)
+                  color_off: var(--dark-background-color)
+                - type: "custom:button-card"
+                  entity: switch.living_room_sonos
+                  icon: mdi:itunes
+                  color_type: card
+                  color: var(--primary-color) #cool green color rgb(223, 255, 97)
+                  color_off: var(--dark-background-color)
+            - type: conditional
+              conditions:
+                - entity: media_player.fire_tv_living_room
+                  state: "playing"
+              card:
+                type: media-control
+                entity: media_player.fire_tv_living_room
+            - type: conditional
+              conditions:
+                - entity: media_player.plex_living_room
+                  state: "playing"
+              card:
+                type: media-control
+                entity: media_player.plex_living_room
+      - type: conditional
+        conditions:
+          - entity: media_player.sonos_living_room
+            state: "playing"
+          - entity: input_boolean.announcement_running
+            state: "off"
+        card:
+          type: custom:mini-media-player
+          entity: media_player.sonos_living_room
+          name: Living Room
+          artwork: cover
+          hide_power: true
+          hide_volume: false
+          show_source: true
+          icon: mdi:itunes
+          show_progress: true
+          scroll_info: true
+          max_volume: 30
+          artwork_border: true
+      - type: conditional
+        conditions:
+          - entity: media_player.sonos_surround
+            state: "playing"
+          - entity: media_player.sonos_living_room
+            state_not: "playing"
+          - entity: input_boolean.announcement_running
+            state: "off"
+        card:
+          type: custom:mini-media-player
+          entity: media_player.sonos_surround
+          name: Surround
+          artwork: cover
+          hide_power: true
+          hide_volume: false
+          show_source: true
+          icon: mdi:itunes
+          show_progress: true
+          scroll_info: true
+          max_volume: 30
+          artwork_border: true
+######################################################################################################
+#                      BEDROOM DYNAMIC CONTROLS                                                      #
+######################################################################################################
+      - type: conditional
+        conditions:
+          - entity: input_boolean.home_scene
+            state: "on"
+          - entity: binary_sensor.display_bedroom_dynamic_controls
+            state: "on"
+          - entity: input_boolean.hide_bedroom
+            state: "off"
+        card:
+          type: vertical-stack
+          cards:
+            - type: entities
+              show_header_toggle: false
+              title: Bedroom
+              entities:
+                - entity: light.bed_ceiling
+                  icon: mdi:lightbulb-outline
+                - entity: group.night_tables
+                  icon: mdi:lightbulb-outline
+                - entity: light.bathroom
+                  name: Ensuite
+            - type: horizontal-stack
+              cards:
+                - type: "custom:button-card"
+                  entity: switch.apple_tv
+                  icon: mdi:apple
+                  color_type: card
+                  color: var(--primary-color) #cool green color rgb(223, 255, 97)
+                  color_off: var(--dark-background-color)
+                - type: "custom:button-card"
+                  entity: switch.bedroom_sonos
+                  icon: mdi:itunes
+                  color_type: card
+                  color: var(--primary-color) #cool green color rgb(223, 255, 97)
+                  color_off: var(--dark-background-color)
+                - type: "custom:button-card"
+                  color_type: blank-card
+                - type: "custom:button-card"
+                  color_type: blank-card
+            - type: conditional
+              conditions:
+                - entity: media_player.apple_tv_bedroom
+                  state: "playing"
+                - entity: media_player.plex_bedroom
+                  state_not: "playing"
+              card:
+                type: media-control
+                entity: media_player.apple_tv_bedroom
+            - type: conditional
+              conditions:
+                - entity: media_player.plex_bedroom
+                  state: "playing"
+              card:
+                type: media-control
+                entity: media_player.plex_bedroom
+      - type: conditional
+        conditions:
+          - entity: media_player.sonos_master_bedroom
+            state: "playing"
+          - entity: input_boolean.announcement_running
+            state: "off"
+        card:
+          type: custom:mini-media-player
+          entity: media_player.sonos_master_bedroom
+          name: Master Bedroom
+          artwork: cover
+          hide_power: true
+          hide_volume: false
+          show_source: true
+          icon: mdi:itunes
+          show_progress: true
+          scroll_info: true
+          max_volume: 30
+          artwork_border: true
+#################################################################################
+#                      OTHER ROOM MEDIA PLAYERS                                 #
+#################################################################################
+      - type: conditional
+        conditions:
+          - entity: media_player.sonos_guest_room
+            state: "playing"
+          - entity: input_boolean.announcement_running
+            state: "off"
+        card:
+          type: custom:mini-media-player
+          entity: media_player.sonos_guest_room
+          name: Guest Room
+          artwork: cover
+          hide_power: true
+          hide_volume: false
+          show_source: true
+          icon: mdi:itunes
+          show_progress: true
+          scroll_info: true
+          max_volume: 30
+          artwork_border: true
+      - type: conditional
+        conditions:
+          - entity: media_player.sonos_office
+            state: "playing"
+          - entity: input_boolean.announcement_running
+            state: "off"
+        card:
+          type: custom:mini-media-player
+          entity: media_player.sonos_office
+          name: Office
+          artwork: cover
+          hide_power: true
+          hide_volume: false
+          show_source: true
+          icon: mdi:itunes
+          show_progress: true
+          scroll_info: true
+          max_volume: 30
+          artwork_border: true
+######################################################################################################
+#                      VACATION                                                                      #
+######################################################################################################
+      - type: conditional
+        conditions:
+          - entity: input_boolean.vacation_scene
+            state: "on"
+        card:
+          type: vertical-stack
+          cards:
+            - type: picture-elements
+              image: /local/ui-lovelace/beach.jpg
+              elements:
+                - type: state-label
+                  entity: input_boolean.vacation_scene
+                  prefix: 'Vacation Mode '
+                  style:
+                    top: 10%
+                    left: 50%
+                    color: white
+                    font-size: 20px
+                    font-weight: 'bold'
+                - type: state-icon
+                  entity: input_boolean.vacation_lights
+                  tap_action: toggle
+                  style:
+                    top: 40%
+                    left: 25%
+                    --iron-icon-height: 70px
+                    --iron-icon-width: 70px
+                - type: state-icon
+                  entity: input_boolean.vacation_audio
+                  tap_action: toggle
+                  style:
+                    top: 40%
+                    left: 65%
+                    --iron-icon-height: 70px
+                    --iron-icon-width: 70px
+                - type: state-label
+                  entity: sensor.vacation_lights_start_pm
+                  #prefix: 'Lights on: '
+                  suffix: ' - '
+                  style:
+                    top: 75%
+                    left: 33%
+                    color: white
+                    font-size: 20px
+                    font-weight: 'bold'
+                - type: state-label
+                  entity: sensor.vacation_lights_upstairs_off_time
+                  #prefix: 'Lights off: '
+                  style:
+                    top: 85%
+                    left: 30%
+                    color: white
+                    font-size: 20px
+                    font-weight: 'bold'
+                - type: state-label
+                  entity: sensor.vacation_music_start_pm
+                  #prefix: 'Music on: '
+                  suffix: ' - '
+                  style:
+                    top: 75%
+                    left: 73%
+                    color: white
+                    font-size: 20px
+                    font-weight: 'bold'
+                - type: state-label
+                  entity: sensor.vacation_music_off_time
+                  #prefix: 'Music off: '
+                  style:
+                    top: 85%
+                    left: 70%
+                    color: white
+                    font-size: 20px
+                    font-weight: 'bold'
+            - type: picture-elements
+              image: /local/ui-lovelace/blank-short.png
+              elements:
+                - type: image
+                  camera_image: camera.front_door
+                  tap_action: more-info
+                  style:
+                    top: 50%
+                    left: 10%
+                    transform: translate(-40%, -40%)
+                    # top: 50%
+                    # left: 50%
+                    # height: 100%
+                    # width: 100%
+                - type: state-label
+                  entity: sensor.front_door_last_opened
+                  prefix: 'Last opened: '
+                  style:
+                    top: 30%
+                    left: 70%
+                    color: white
+                    font-size: 12px
+                    font-weight: 'bold'
+                    #float: left
+                    #text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+                - type: state-label
+                  entity: sensor.front_door_last_locked
+                  prefix: 'Last locked: '
+                  style:
+                    top: 50%
+                    left: 70%
+                    color: white
+                    font-size: 12px
+                    font-weight: 'bold'
+                    #float: left
+                    #text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+                - type: state-label
+                  entity: sensor.last_motion
+                  prefix: 'Last motion: '
+                  style:
+                    top: 70%
+                    left: 70%
+                    color: white
+                    font-size: 12px
+                    font-weight: 'bold'
+                    #float: left
+                    #text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+                - type: state-label
+                  entity: sensor.last_ring
+                  prefix: 'Last ring: '
+                  style:
+                    top: 90%
+                    left: 70%
+                    color: white
+                    font-size: 12px
+                    font-weight: 'bold'
+                    text-align: left
+                    #text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+
+
+#################################################################################
+#                      POWER SAVER - BASEMENT                                   #
+#################################################################################
+      - type: conditional
+        conditions:
+          - entity: remote.basement
+            state: "off"
+          - entity: binary_sensor.basement_occupancy
+            state: "off"
+          - entity: input_boolean.sleep_scene
+            state: "off"
+          - entity: input_boolean.show_power_saving_suggestions
+            state: "on"
+        card:
+          type: entity-filter
+          show_empty: false
+          entities:
+            - entity: light.basement
+              tap_action: toggle
+            - entity: light.basement_floor_lamp
+              tap_action: toggle
+            - entity: group.basement_ceiling
+              tap_action: toggle
+              icon: mdi:lightbulb
+          state_filter:
+            - "on"
+          card:
+            type: glance
+            title: Basement Powersaver
+            show_state: false
+############################# SAME POWER SAVER - NOT AT HOME ####################
+      - type: conditional
+        conditions:
+          - entity: input_boolean.home_scene
+            state_not: "on"
+          - entity: remote.basement
+            state: "off"
+          - entity: input_boolean.show_power_saving_suggestions
+            state: "on"
+        card:
+          type: entity-filter
+          show_empty: false
+          entities:
+            - entity: light.basement
+              tap_action: toggle
+            - entity: light.basement_floor_lamp
+              tap_action: toggle
+          state_filter:
+            - "on"
+          card:
+            type: glance
+            title: Basement Powersaver
+            show_state: false
+#################################################################################
+#                      POWER SAVER - MAIN FLOOR                                 #
+#################################################################################
+      - type: conditional
+        conditions:
+          - entity: remote.living_room
+            state: "off"
+          - entity: binary_sensor.kitchen_occupancy
+            state: "off"
+          - entity: binary_sensor.ecobee_occupancy
+            state: "off"
+          - entity: input_boolean.sleep_scene
+            state: "off"
+          - entity: input_boolean.show_power_saving_suggestions
+            state: "on"
+        card:
+          type: entity-filter
+          show_empty: false
+          entities:
+            # - entity: light.living_room
+            #   tap_action: toggle
+            - entity: group.floor_lamp_lights
+              icon: mdi:floor-lamp
+              name: Floor Lamp
+              tap_action: toggle
+            - entity: light.kitchen
+              tap_action: toggle
+            - entity: light.lower_hallway
+              tap_action: toggle
+            - entity: light.entrance
+              tap_action: toggle
+          state_filter:
+            - "on"
+          card:
+            type: glance
+            title: Main Floor Powersaver
+            show_state: false
+############################# SAME POWER SAVER - NOT AT HOME #######################
+      - type: conditional
+        conditions:
+          - entity: input_boolean.home_scene
+            state_not: "on"
+          - entity: remote.living_room
+            state: "off"
+          - entity: input_boolean.show_power_saving_suggestions
+            state: "on"
+        card:
+          type: entity-filter
+          show_empty: false
+          entities:
+            - entity: group.floor_lamp_lights
+              icon: mdi:floor-lamp
+              name: Floor Lamp
+              tap_action: toggle
+            - entity: light.kitchen
+              tap_action: toggle
+            - entity: light.lower_hallway
+              tap_action: toggle
+            - entity: light.entrance
+              tap_action: toggle
+          state_filter:
+            - "on"
+          card:
+            type: glance
+            title: Main Floor Powersaver
+            show_state: false
+#################################################################################
+#                      POWER SAVER - SECOND FLOOR                               #
+#################################################################################
+      - type: conditional
+        conditions:
+          - entity: remote.bedroom
+            state: "off"
+          - entity: binary_sensor.bedroom_occupancy
+            state: "off"
+          - entity: binary_sensor.guest_room_occupancy
+            state: "off"
+          - entity: binary_sensor.office_occupancy
+            state: "off"
+          - entity: input_boolean.sleep_scene
+            state: "off"
+          - entity: input_boolean.show_power_saving_suggestions
+            state: "on"
+        card:
+          type: entity-filter
+          show_empty: false
+          entities:
+            - entity: group.night_table_lights
+              tap_action: toggle
+              name: Night Tables
+              icon: mdi:lamp
+            - entity: light.bed_ceiling
+              tap_action: toggle
+            - entity: light.ensuite
+              tap_action: toggle
+            - entity: light.upstairs_hallway
+              tap_action: toggle
+            - entity: light.den
+              tap_action: toggle
+            - entity: light.spotlight
+              tap_action: toggle
+              icon: mdi:spotlight-beam
+            - entity: switch.guest_room
+              tap_action: toggle
+            - entity: light.guest_bathroom
+              tap_action: toggle
+            - entity: switch.window_lights
+              tap_action: toggle
+            - entity: switch.dyson_fan_power
+              tap_action: toggle
+              name: Fan
+              icon: mdi:fan
+          state_filter:
+            - "on"
+          card:
+            type: glance
+            title: Second Floor Powersaver
+            show_state: false
+############################# SAME POWER SAVER - NOT AT HOME #######################
+      - type: conditional
+        conditions:
+          - entity: input_boolean.home_scene
+            state_not: "on"
+          - entity: remote.bedroom
+            state: "off"
+          - entity: input_boolean.show_power_saving_suggestions
+            state: "on"
+        card:
+          type: entity-filter
+          show_empty: false
+          entities:
+            - entity: group.night_table_lights
+              tap_action: toggle
+              name: Night Tables
+              icon: mdi:lamp
+            - entity: light.bed_ceiling
+              tap_action: toggle
+            - entity: light.ensuite
+              tap_action: toggle
+            - entity: light.upstairs_hallway
+              tap_action: toggle
+            - entity: light.den
+              tap_action: toggle
+            - entity: light.spotlight
+              tap_action: toggle
+              icon: mdi:spotlight-beam
+            - entity: switch.guest_room
+              tap_action: toggle
+            - entity: switch.window_lights
+              tap_action: toggle
+            - entity: light.guest_bathroom
+              tap_action: toggle
+          state_filter:
+            - "on"
+          card:
+            type: glance
+            title: Second Floor Powersaver
+            show_state: false
+#################################################################################
+#                      SCENES - MORNING                                         #
+#################################################################################
+      - type: conditional
+        conditions:
+          - entity: binary_sensor.display_sleep_session
+            state: "on"
+        card:
+          type: vertical-stack
+          cards:
+            - type: picture-elements
+              image: /local/ui-lovelace/morning_eight_sleep_summary.jpg
+              elements:
+                - type: state-label
+                  entity: sensor.sleep_score_left
+                  style:
+                    top: 40%
+                    left: 25%
+                    font-size: 70px
+                    color: 'White'
+                    font-weight: 'bold'
+                - type: state-label
+                  entity: sensor.sleep_score_right
+                  style:
+                    top: 40%
+                    left: 75%
+                    font-size: 70px
+                    color: 'White'
+                    font-weight: 'bold'
+                    #text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+                - type: state-label
+                  entity: sensor.eight_anja_sleep_rating
+                  prefix: 'Anja: '
+                  style:
+                    top: 70%
+                    left: 25%
+                    font-size: 18px
+                    color: 'White'
+                    font-weight: 'bold'
+                    text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+                - type: state-label
+                  entity: sensor.eight_jeremy_sleep_rating
+                  prefix: 'Jeremy: '
+                  style:
+                    top: 70%
+                    left: 75%
+                    font-size: 18px
+                    color: 'White'
+                    font-weight: 'bold'
+                    text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+                - type: state-label
+                  entity: sensor.eight_left_sleep_time
+                  style:
+                    top: 85%
+                    left: 25%
+                    font-size: 14px
+                    color: 'White'
+                    text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+                    #font-weight: 'bold'
+                - type: state-label
+                  entity: sensor.eight_right_sleep_time
+                  style:
+                    top: 85%
+                    left: 75%
+                    font-size: 14px
+                    color: 'White'
+                    text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+                    #font-weight: 'bold'
+            - type: glance
+              column_width: calc(100% / 3)
+              show_state: false
+              entities:
+                - entity: script.morning_sequence
+                  tap_action: toggle
+                - entity: script.snooze_alarms
+                  name: Snooze
+                  icon: mdi:alarm-snooze
+                  tap_action: toggle
+                - entity: input_boolean.do_not_disturb_guest_room
+                  name: Do Not Distub Guest
+                  tap_action: toggle
+            - type: entities
+              entities:
+                - entity: input_number.snooze
+                  name: Snooze Time
+            - type: conditional
+              conditions:
+                - entity: binary_sensor.display_work_commute
+                  state: "on"
+              card:
+                type: picture-elements
+                image: /local/ui-lovelace/morning_traffic.jpg
+                elements:
+                  - type: state-label
+                    entity: sensor.waze_least_traffic_to_work_today_mins
+                    style:
+                      top: 40%
+                      left: 25%
+                      font-size: 70px
+                      color: 'White'
+                      font-weight: 'bold'
+                  - type: state-label
+                    entity: sensor.waze_most_traffic_to_work_today_mins
+                    style:
+                      top: 40%
+                      left: 75%
+                      font-size: 70px
+                      color: 'White'
+                      font-weight: 'bold'
+                      #text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+                  - type: state-label
+                    entity: sensor.waze_least_traffic_to_work_today
+                    style:
+                      top: 70%
+                      left: 25%
+                      font-size: 18px
+                      color: 'White'
+                      font-weight: 'bold'
+                      text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+                  - type: state-label
+                    entity: sensor.waze_most_traffic_to_work_today
+                    style:
+                      top: 70%
+                      left: 75%
+                      font-size: 18px
+                      color: 'White'
+                      font-weight: 'bold'
+                      text-shadow: '-1px 1px 0 grey, 1px -1px 0 grey, -1px 1px 0 grey, 1px 1px 0 grey'
+#################################################################################
+#                      SCENES - SLEEP                                           #
+#################################################################################
+###########################################################
+#                      TOMORROWS OUTLOOK                  #
+###########################################################
+      - type: conditional
+        conditions:
+          - entity: binary_sensor.display_outlook
+            state: "off"
+          - entity: input_boolean.show_outlook
+            state: "off"
+        card:
+          type: picture-elements
+          image: /local/ui-lovelace/outlook_background.jpg
+          elements:
+            - type: state-label
+              entity: sensor.agenda_anja
+              style:
+                top: 45%
+                left: 50%
+                font-size: 16px
+                color: 'Black'
+                font-weight: 'bold'
+                # box-sizing: content-box
+                # width: 300px
+                # height: 100px
+                # padding: 30px
+            - type: state-label
+              entity: sensor.agenda_jeremy
+              style:
+                top: 60%
+                left: 50%
+                font-size: 16px
+                color: 'Black'
+                font-weight: 'bold'
+            - type: state-label
+              entity: sensor.dark_sky_daily_summary
+              style:
+                top: 80%
+                left: 50%
+                font-size: 10px
+                color: 'White'
+                font-weight: 'bold'
+            - type: state-icon
+              entity: binary_sensor.weather_icon_forecast
+              tap_action: navigate
+              navigation_path: /lovelace/weather
+              style:
+                top: 50%
+                left: 50%
+                background-size: contain
+                background: none
+            - type: state-icon
+              entity: input_boolean.show_outlook
+              tap_action: toggle
+              style:
+                top: 10%
+                left: 96%
+###########################################################
+#                      ALARM CLOCK                        #
+###########################################################
+      - type: conditional
+        conditions:
+          - entity: sun.sun
+            state: "below_horizon"
+          - entity: input_boolean.vacation_scene
+            state: "off"
+        card:
+          type: vertical-stack
+          cards:
+            - type: picture-elements
+              image: /local/ui-lovelace/alarm_clock_background.jpg
+              elements:
+                - type: state-label
+                  entity: sensor.next_alarm_time_am_pm
+                  tap_action: navigate
+                  navigation_path: /lovelace/alarm_clock
+                  style:
+                    top: 40%
+                    left: 50%
+                    font-size: 30px
+                    color: 'White'
+                    font-weight: 'bold'
+                - type: state-label
+                  entity: sensor.sleep_time_from_now_to_alarm
+                  tap_action: navigate
+                  navigation_path: /lovelace/alarm_clock
+                  style:
+                    top: 60%
+                    left: 50%
+                    font-size: 15px
+                    color: 'White'
+                    font-weight: 'bold'
+                - type: state-label
+                  entity: sensor.morning_music_weekday
+                  tap_action: navigate
+                  navigation_path: /lovelace/alarm_clock
+                  style:
+                    top: 75%
+                    left: 50%
+                    font-size: 12px
+                    color: 'White'
+                    font-weight: 'normal'
+            - type: glance
+              show_header_toggle: false
+              show_state: false
+              column_width: calc(100% / 4)
+              entities:
+                - entity: input_boolean.use_ideal_alarm_clock
+                  name: Ideal
+                  tap_action: toggle
+                - entity: input_boolean.alarm_clock_weekdays
+                  name: Schedule
+                  tap_action: toggle
+                - entity: input_boolean.alarm_clock_one_time
+                  name: Custom
+                  tap_action: toggle
+                - entity: input_boolean.more_options
+                  name: More
+                  tap_action: toggle
+            - type: conditional
+              conditions:
+                - entity: sun.sun
+                  state: "below_horizon"
+                - entity: input_boolean.more_options
+                  state: "on"
+              card:
+                type: glance
+                show_header_toggle: false
+                show_state: false
+                column_width: calc(100% / 4)
+                entities:
+                  - entity: input_boolean.sleep_in_mode
+                    name: Sleep In
+                    tap_action: toggle
+                  - entity: input_boolean.do_not_disturb_guest_room
+                    name: Do Not Disturb Guest
+                    tap_action: toggle
+                  - entity: script.sleep_guest_room
+                    name: Sleep in Guest Room
+                    tap_action: call-service
+                    service: script.turn_on
+                  - entity: input_boolean.silent_goodnight
+                    name: Silent Goodnight
+                    tap_action: toggle
+            - type: "custom:weather-card-mini"
+              entity_weather: weather.openweathermap
+              entity_sun: sun.sun
+###########################################################
+#                      DYSON FAN                          #
+###########################################################
+      - type: conditional
+        conditions:
+          - entity: binary_sensor.display_fan
+            state: "on"
+        card:
+          type: vertical-stack
+          cards:
+            # - type: custom:card-modder
+            #   card:
+            #     type: entities
+            #     entities:
+            #       - switch.dyson_fan_power
+            #       - input_number.dyson_fan_speed
+            #       - script.dyson_oscillate
+            #   style:
+            #     "color": "white"
+            #     "background": "url(/local/ui-lovelace/dyson_oscillate.GIF)"
+            - type: picture-elements
+              image: /local/ui-lovelace/dyson_oscillate.GIF
+              elements:
+                - type: state-label
+                  entity: sensor.dyson_fan_speed
+                  style:
+                    top: 50%
+                    left: 80%
+                    font-size: 35px
+                    font-weight: 'bold'
+                    color: grey
+                    opacity: 0.5
+                - type: icon
+                  icon: mdi:rotate-3d
+                  tap_action: call-service
+                  service: script.dyson_oscillate
+                  style:
+                    top: 20%
+                    left: 90%
+                    --iron-icon-height: 35px
+                    --iron-icon-width: 35px
+                - type: state-icon
+                  icon: mdi:power
+                  tap_action: toggle
+                  entity: switch.dyson_fan_power
+                  style:
+                    top: 80%
+                    left: 90%
+                    --iron-icon-height: 35px
+                    --iron-icon-width: 35px
+                - type: icon
+                  icon: mdi:arrow-up-bold-circle-outline
+                  tap_action: call-service
+                  service: script.dyson_speed_up
+                  style:
+                    top: 20%
+                    left: 80%
+                    --iron-icon-height: 35px
+                    --iron-icon-width: 35px
+                - type: icon
+                  icon: mdi:arrow-down-bold-circle-outline
+                  tap_action: call-service
+                  service: script.dyson_speed_down
+                  style:
+                    top: 80%
+                    left: 80%
+                    --iron-icon-height: 35px
+                    --iron-icon-width: 35px
+###########################################################
+#                      EIGHT SLEEP                        #
+###########################################################
+      - type: conditional
+        conditions:
+          - entity: binary_sensor.display_eight_sleep
+            state: "on"
+        card:
+          type: picture-elements
+          image: /local/ui-lovelace/eight_sleep_bed.png
+          elements:
+            - type: state-label
+              entity: sensor.eight_sleep_longest_time_remaining
+              style:
+                top: 90%
+                left: 50%
+                font-size: 18px
+                color: white
+                font-weight: bold
+            - type: state-label
+              entity: sensor.eight_left_heat_target
+              style:
+                top: 70%
+                left: 23%
+                font-size: 20px
+                font-weight: 'bold'
+                color: white
+                opacity: 0.7
+            - type: state-label
+              entity: sensor.eight_right_heat_target
+              style:
+                top: 70%
+                left: 80%
+                font-size: 20px
+                font-weight: 'bold'
+                color: white
+                opacity: 0.7
+            - type: state-icon
+              icon: mdi:fire
+              tap_action: toggle
+              entity: switch.eight_left_heat
+              style:
+                top: 35%
+                left: 35%
+                --iron-icon-height: 40px
+                --iron-icon-width: 40px
+            - type: state-icon
+              icon: mdi:fire
+              tap_action: toggle
+              entity: switch.eight_right_heat
+              style:
+                top: 35%
+                left: 66%
+                --iron-icon-height: 40px
+                --iron-icon-width: 40px
+
+#################################################################################
+#                      CLIMATE - ECOBEE                                         #
+#################################################################################
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: picture-elements
+                image: /local/ui-lovelace/blank-horizontal.png
+                elements:
+                  - type: state-badge
+                    entity: sensor.bedroom_temperature
+                    name: Bedroom
+                    style:
+                      top: 25%
+                      left: 20%
+                      font-size: 12px
+                      color: white
+                      font-weight: 'bold'
+                  - type: state-badge
+                    entity: sensor.office_temperature
+                    name: Office
+                    style:
+                      top: 25%
+                      left: 50%
+                      font-size: 12px
+                      color: white
+                      font-weight: 'bold'
+                  - type: state-badge
+                    entity: sensor.guest_room_temperature
+                    name: Guest
+                    style:
+                      top: 25%
+                      left: 80%
+                      font-size: 12px
+                      color: white
+                      font-weight: 'bold'
+                  - type: state-badge
+                    entity: sensor.ecobee_temperature
+                    name: Hallway
+                    style:
+                      top: 70%
+                      left: 20%
+                      font-size: 12px
+                      color: white
+                      font-weight: 'bold'
+                  - type: state-badge
+                    entity: sensor.kitchen_temperature
+                    name: Living
+                    style:
+                      top: 70%
+                      left: 50%
+                      font-size: 12px
+                      color: white
+                      font-weight: 'bold'
+                  - type: state-badge
+                    entity: sensor.basement_temperature
+                    name: Basement
+                    style:
+                      top: 70%
+                      left: 80%
+                      font-size: 12px
+                      color: white
+                      font-weight: 'bold'
+              - type: custom:thermostat-card
+                #title: ecobee
+                entity: climate.ecobee
+          - type: picture-entity
+            entity: cover.living_room
+            name: Living Room Blinds
+            tap_action: toggle
+            state_image:
+              "open": /local/ui-lovelace/blinds-open.jpg
+              "closed": /local/ui-lovelace/blinds-closed.jpeg
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_number.living_room_blinds
+                name: Tilt
+          - type: conditional
+            conditions:
+              - entity: sensor.season
+                state_not: "summer"
+            card:
+              type: entities
+              show_header_toggle: false
+              entities:
+                - entity: switch.fireplace
+
+######################################################################################################
+#                      ROOMS - HOME SCENE                                                            #
+######################################################################################################
+      - type: conditional
+        conditions:
+          - entity: input_boolean.home_scene
+            state: "on"
+          - entity: input_boolean.hide_room_glances
+            state: "off"
+        card:
+          type: vertical-stack
+          cards:
+#################################################################################
+#                      ROOMS - LIVING ROOM                                      #
+#################################################################################
+            - type: picture-glance
+              image: /local/ui-lovelace/living_room.jpg
+              #title: Living Room
+              entities:
+                - entity: light.living_room
+                - entity: binary_sensor.kitchen_occupancy
+                  icon: mdi:run-fast
+                - entity: cover.living_room
+                  tap_action: toggle
+                - entity: switch.youtube
+                - entity: switch.jw_broadcasting
+                - entity: switch.plex
+                - entity: switch.netflix
+                - entity: switch.living_room_sonos
+#################################################################################
+#                      ROOMS - BEDROOM                                          #
+#################################################################################
+            - type: picture-glance
+              image: /local/ui-lovelace/bedroom.jpeg
+              #title: Basement
+              entities:
+                - entity: light.bed_ceiling
+                  icon: mdi:light
+                - entity: group.night_table_lights
+                  icon: mdi:lamp
+                - entity: light.bathroom
+                  icon: mdi:toilet
+                - entity: light.bed_closet
+                  icon: mdi:hanger
+                - entity: binary_sensor.bedroom_occupancy
+                  icon: mdi:run-fast
+                - entity: switch.apple_tv
+                - entity: switch.bedroom_sonos
+#################################################################################
+#                      ROOMS - GUEST ROOM                                       #
+#################################################################################
+            - type: picture-glance
+              image: /local/ui-lovelace/guest_room.jpg
+              entities:
+                - entity: switch.guest_room
+                  icon: mdi:lightbulb
+                - entity: switch.window_lights
+                  icon: mdi:border-top
+                - entity: switch.guest_bathroom
+                  icon: mdi:toilet
+                - entity: binary_sensor.guest_room_occupancy
+                  icon: mdi:run-fast
+                - entity: switch.guest_room_sonos
+#################################################################################
+#                      ROOMS - OFFICE                                           #
+#################################################################################
+            - type: picture-glance
+              image: /local/ui-lovelace/office.jpeg
+              entities:
+                - entity: light.den
+                  icon: mdi:lightbulb
+                - entity: light.spotlight
+                  icon: mdi:spotlight-beam
+                - entity: binary_sensor.office_occupancy
+                  icon: mdi:run-fast
+                - entity: switch.office_sonos
+                  icon: mdi:itunes
+#################################################################################
+#                      ROOMS - BASEMENT                                         #
+#################################################################################
+            - type: picture-glance
+              image: /local/ui-lovelace/basement.jpeg
+              #title: Basement
+              entities:
+                - entity: group.basement_ceiling
+                  icon: mdi:lightbulb
+                - entity: light.basement_floor_lamp
+                  icon: mdi:floor-lamp
+                - entity: binary_sensor.basement_occupancy
+                  icon: mdi:run-fast
+                - entity: switch.wii_u
+                - entity: switch.xbox
+                - entity: switch.fire_tv_basement
+                - entity: switch.media_center
+                - entity: switch.basement_sonos
+
+######################################################################################################
+#                      ROOMS - SECURITY CAMERAS                                                      #
+######################################################################################################
+      - type: vertical-stack
+        cards:
+#################################################################################
+#                      ROOMS/SECURITY - ENTRANCE                                #
+#################################################################################
+          - type: picture-glance
+            title: Entrance
+            camera_image: camera.front_door
+            entities:
+              #- entity: camera.front_door
+              - entity: lock.front_door
+              - entity: light.entrance
+              - entity: binary_sensor.front_door_motion
+                icon: mdi:run-fast
+              - entity: input_boolean.unlock_front_door_upon_arrival
+#################################################################################
+#                      ROOMS/SECURITY - KITCHEN                                 #
+#################################################################################
+          - type: picture-glance
+            title: Kitchen
+            camera_image: camera.blink_inside_house
+            entities:
+              - entity: light.kitchen
+                icon: mdi:lightbulb
+              - entity: binary_sensor.kitchen_occupancy
+                icon: mdi:run-fast
+              - entity: switch.blink_armed_status
+              - entity: script.blink_inside_house_trigger_camera
+                tap_action: call-service
+                service: script.turn_on
+
+#################################################################################
+#                      ROOMS/SECURITY - GARAGE                                  #
+#################################################################################
+          - type: picture-glance
+            title: Garage
+            camera_image: camera.garage
+            entities:
+              #- entity: camera.garage
+              - entity: light.garage
+              - entity: cover.my_garage_door
+              - entity: switch.garage_door
+#################################################################################
+#                      LOCATION MAP                                             #
+#################################################################################
+      - type: conditional
+        conditions:
+          - entity: input_boolean.sleep_scene
+            state: "off"
+          - entity: input_boolean.push_notification_distance_anja_to_jeremy
+            state: "off"
+          - entity: binary_sensor.everyone_home
+            state: "off"
+        card:
+          type: vertical-stack
+          cards:
+            - type: map
+              entities:
+                - entity: device_tracker.anjas_iphone
+                - entity: device_tracker.jeremys_iphone
+                - entity: zone.home
+                - entity: zone.work
+            - type: conditional
+              conditions:
+                - entity: device_tracker.anjas_iphone
+                  state_not: "home"
+              card:
+                type: picture-entity
+                entity: camera.street_view_anja_gps
+                name: "Anja's Current Location"
+            - type: conditional
+              conditions:
+                - entity: device_tracker.jeremys_iphone
+                  state_not: "home"
+              card:
+                type: picture-entity
+                entity: camera.street_view_jeremy_gps
+                name: "Jeremy's Current Location"
+            - type: glance
+              show_header_toggle: false
+              column_width: calc(100% / 2)
+              entities:
+                - entity: input_boolean.push_notification_distance_anja_to_jeremy
+                  tap_action: toggle
+                  name: Send to Jeremy
+                - entity: sensor.google_travel_time_anja_to_jeremy
+                  name: Anja to Jeremy
+                - entity: input_boolean.push_notification_distance_jeremy_to_anja
+                  tap_action: toggle
+                  name: Send to Anja
+                - entity: sensor.google_travel_time_jeremy_to_anja
+                  name: Jeremy to Anja
+
+#################################################################################
+#                      VIEWS - WEATHER                                          #
+#################################################################################
+  - icon: mdi:weather-cloudy
+    id: weather
+    name: Weather
+    #panel: true
+    cards:
+      # - type: iframe
+      #   url: https:///www.windy.com/?radar,45.275,-75.872,5
+      #   aspect_ratio: "100%"
+      - type: "custom:weather-card-mini"
+        entity_weather: weather.openweathermap
+        entity_sun: sun.sun
+      - type: custom:dark-sky-weather-card
+        entity_sun: sun.sun
+        entity_daily_summary: sensor.dark_sky_daily_summary
+        entity_current_conditions: sensor.dark_sky_icon
+        entity_humidity: sensor.dark_sky_humidity
+        entity_pressure: sensor.dark_sky_pressure
+        entity_temperature: sensor.dark_sky_temperature
+        entity_visibility: sensor.dark_sky_visibility
+        entity_wind_bearing: sensor.dark_sky_wind_bearing
+        entity_wind_speed: sensor.dark_sky_wind_speed
+        entity_forecast_high_temp_1: sensor.dark_sky_daytime_high_temperature_1
+        entity_forecast_high_temp_2: sensor.dark_sky_daytime_high_temperature_2
+        entity_forecast_high_temp_3: sensor.dark_sky_daytime_high_temperature_3
+        entity_forecast_high_temp_4: sensor.dark_sky_daytime_high_temperature_4
+        entity_forecast_high_temp_5: sensor.dark_sky_daytime_high_temperature_5
+        entity_forecast_low_temp_1: sensor.dark_sky_overnight_low_temperature
+        entity_forecast_low_temp_2: sensor.dark_sky_overnight_low_temperature_1
+        entity_forecast_low_temp_3: sensor.dark_sky_overnight_low_temperature_2
+        entity_forecast_low_temp_4: sensor.dark_sky_overnight_low_temperature_3
+        entity_forecast_low_temp_5: sensor.dark_sky_overnight_low_temperature_4
+        entity_forecast_icon_1: sensor.dark_sky_icon_1
+        entity_forecast_icon_2: sensor.dark_sky_icon_2
+        entity_forecast_icon_3: sensor.dark_sky_icon_3
+        entity_forecast_icon_4: sensor.dark_sky_icon_4
+        entity_forecast_icon_5: sensor.dark_sky_icon_5
+
+#################################################################################
+#                      VIEWS - ALARM CLOCK                                      #
+#################################################################################
+  - icon: mdi:alarm
+    id: alarm_clock
+    name: Alarm Clock
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: picture-elements
+            image: /local/ui-lovelace/alarm_clock_background.jpg
+            elements:
+              - type: state-label
+                entity: sensor.next_alarm_time_am_pm
+                style:
+                  top: 40%
+                  left: 50%
+                  font-size: 30px
+                  color: 'White'
+                  font-weight: 'bold'
+              - type: state-label
+                entity: sensor.sleep_time_from_now_to_alarm
+                style:
+                  top: 60%
+                  left: 50%
+                  font-size: 15px
+                  color: 'White'
+                  font-weight: 'bold'
+              - type: state-label
+                entity: sensor.morning_music_weekday
+                style:
+                  top: 75%
+                  left: 50%
+                  font-size: 12px
+                  color: 'White'
+                  font-weight: 'normal'
+      - type: vertical-stack
+        cards:
+          - type: glance
+            show_state: false
+            show_header_toggle: false
+            column_width: calc(100% / 4)
+            entities:
+              - entity: input_boolean.use_ideal_alarm_clock
+                name: Ideal
+                tap_action: toggle
+              - entity: input_boolean.alarm_clock_one_time
+                name: Custom
+                tap_action: toggle
+              - entity: input_boolean.alarm_clock_weekdays
+                name: Schedule
+                tap_action: toggle
+              - entity: input_boolean.more_options
+                name: More
+                tap_action: toggle
+          - type: conditional
+            conditions:
+              - entity: input_boolean.more_options
+                state: "on"
+            card:
+              type: glance
+              show_state: false
+              show_header_toggle: false
+              column_width: calc(100% / 3)
+              entities:
+                - entity: input_boolean.silent_goodnight
+                  name: Silent Goodnight
+                  tap_action: toggle
+                - entity: input_boolean.sleep_in_mode
+                  name: Sleep In
+                  tap_action: toggle
+                - entity: input_boolean.do_not_disturb_guest_room
+                  name: Do Not Disturb Guest
+                  tap_action: toggle
+                - entity: input_boolean.first_appointment
+                  name: Alarm On/Off
+                  tap_action: toggle
+                - entity: input_boolean.announce_bed_time
+                  name: Announce Bedtime
+                  tap_action: toggle
+          - type: glance
+            show_state: false
+            title: Working From Home
+            entities:
+              - entity: input_boolean.working_from_home_mon
+                name: Mon
+                tap_action: toggle
+              - entity: input_boolean.working_from_home_tue
+                name: Tue
+                tap_action: toggle
+              - entity: input_boolean.working_from_home_wed
+                name: Wed
+                tap_action: toggle
+              - entity: input_boolean.working_from_home_thu
+                name: Thu
+                tap_action: toggle
+              - entity: input_boolean.working_from_home_fri
+                name: Fri
+                tap_action: toggle
+          - type: conditional
+            conditions:
+              - entity: input_boolean.use_ideal_alarm_clock
+                state: "off"
+              - entity: input_boolean.alarm_clock_one_time
+                state: "on"
+            card:
+              type: entities
+              title: Set Time
+              show_header_toggle: false
+              entities:
+                - entity: input_boolean.alarm_clock_all_on_off
+                - entity: sensor.alarmtime_all
+                - entity: input_number.alarm_hour_all
+                - entity: input_number.alarm_minutes_all
+                - entity: input_select.options_morning_music
+          - type: conditional
+            conditions:
+              - entity: input_boolean.use_ideal_alarm_clock
+                state: "off"
+              - entity: input_boolean.alarm_clock_one_time
+                state: "off"
+            card:
+              type: vertical-stack
+              cards:
+                - type: entities
+                  title: Sunday
+                  show_header_toggle: false
+                  entities:
+                    - entity: input_boolean.alarm_clock_sun
+                    - entity: sensor.alarmtime_sun
+                    - entity: input_number.alarm_hour_sun
+                    - entity: input_number.alarm_minutes_sun
+                    - entity: input_select.options_morning_music_sunday
+                - type: entities
+                  title: Monday
+                  show_header_toggle: false
+                  entities:
+                    - entity: input_boolean.alarm_clock_mon
+                    - entity: sensor.alarmtime_mon
+                    - entity: input_number.alarm_hour_mon
+                    - entity: input_number.alarm_minutes_mon
+                    - entity: input_select.options_morning_music_monday
+                - type: entities
+                  title: Tuesday
+                  show_header_toggle: false
+                  entities:
+                    - entity: input_boolean.alarm_clock_tue
+                    - entity: sensor.alarmtime_tue
+                    - entity: input_number.alarm_hour_tue
+                    - entity: input_number.alarm_minutes_tue
+                    - entity: input_select.options_morning_music_tuesday
+                - type: entities
+                  title: Wednesday
+                  show_header_toggle: false
+                  entities:
+                    - entity: input_boolean.alarm_clock_wed
+                    - entity: sensor.alarmtime_wed
+                    - entity: input_number.alarm_hour_wed
+                    - entity: input_number.alarm_minutes_wed
+                    - entity: input_select.options_morning_music_wednesday
+                - type: entities
+                  title: Thursday
+                  show_header_toggle: false
+                  entities:
+                    - entity: input_boolean.alarm_clock_thu
+                    - entity: sensor.alarmtime_thu
+                    - entity: input_number.alarm_hour_thu
+                    - entity: input_number.alarm_minutes_thu
+                    - entity: input_select.options_morning_music_thursday
+                - type: entities
+                  title: Friday
+                  show_header_toggle: false
+                  entities:
+                    - entity: input_boolean.alarm_clock_fri
+                    - entity: sensor.alarmtime_fri
+                    - entity: input_number.alarm_hour_fri
+                    - entity: input_number.alarm_minutes_fri
+                    - entity: input_select.options_morning_music_friday
+                - type: entities
+                  title: Saturday
+                  show_header_toggle: false
+                  entities:
+                    - entity: input_boolean.alarm_clock_sat
+                    - entity: sensor.alarmtime_sat
+                    - entity: input_number.alarm_hour_sat
+                    - entity: input_number.alarm_minutes_sat
+                    - entity: input_select.options_morning_music_saturday
+          - type: entities
+            title: Options
+            show_header_toggle: false
+            entities:
+              - entity: input_select.options_morning_music
+              - input_number.ideal_sleep_time
+              - input_number.morning_prep_time
+              - input_number.morning_music_delay
+              - sensor.next_alarm_first_attempt
+              - input_number.delay_for_wakeup_attempt
+              - sensor.next_alarm_second_attempt
+#################################################################################
+#                      VIEWS - TRAFFIC CAMERAS                                  #
+#################################################################################
+  - icon: mdi:camera
+    name: Traffic Cams
+    id: traffic_cams
+    cards:
+      - type: picture-entity
+        entity: camera.moodie
+        name: Moodie
+      - type: picture-entity
+        entity: camera.pinecrest
+        name: Pinecrest
+      - type: picture-entity
+        entity: camera.woodroffe
+        name: Woodroffe
+      - type: picture-entity
+        entity: camera.carling
+        name: Carling
+      - type: picture-entity
+        entity: camera.parkdale
+        name: Parkdale
+      - type: picture-entity
+        entity: camera.bronson
+        name: Bronson
+      - type: picture-entity
+        entity: camera.nicholas
+        name: Nicholas
+      - type: picture-entity
+        entity: camera.riverside
+        name: Riverside
+      - type: picture-entity
+        entity: camera.st_laurent
+        name: St. Laurant
+#################################################################################
+#                      VIEWS - MUSIC                                            #
+#################################################################################
+  - icon: mdi:itunes
+    id: sonos
+    name: Music
+    cards:
+      - type: custom:mini-media-player
+        entity: media_player.sonos_living_room
+        name: Living Room
+        artwork: cover
+        hide_power: true
+        hide_volume: false
+        show_source: true
+        icon: mdi:itunes
+        show_progress: true
+        scroll_info: true
+        max_volume: 30
+        artwork_border: true
+      - type: custom:mini-media-player
+        entity: media_player.sonos_surround
+        name: Surround
+        artwork: cover
+        hide_power: true
+        hide_volume: false
+        show_source: true
+        icon: mdi:itunes
+        show_progress: true
+        scroll_info: true
+        max_volume: 30
+        artwork_border: true
+      - type: custom:mini-media-player
+        entity: media_player.sonos_master_bedroom
+        name: Master Bedroom
+        artwork: cover
+        hide_power: true
+        hide_volume: false
+        show_source: true
+        icon: mdi:itunes
+        show_progress: true
+        scroll_info: true
+        max_volume: 30
+        artwork_border: true
+      - type: custom:mini-media-player
+        entity: media_player.sonos_guest_room
+        name: Guest Room
+        artwork: cover
+        hide_power: true
+        hide_volume: false
+        show_source: true
+        icon: mdi:itunes
+        show_progress: true
+        scroll_info: true
+        max_volume: 30
+        artwork_border: true
+      - type: custom:mini-media-player
+        entity: media_player.sonos_office
+        name: Office
+        artwork: cover
+        hide_power: true
+        hide_volume: false
+        show_source: true
+        icon: mdi:itunes
+        show_progress: true
+        scroll_info: true
+        max_volume: 30
+        artwork_border: true
+      - type: custom:mini-media-player
+        entity: media_player.sonos_basement
+        name: Basement
+        artwork: cover
+        hide_power: true
+        hide_volume: false
+        show_source: true
+        icon: mdi:itunes
+        show_progress: true
+        scroll_info: true
+        max_volume: 30
+        artwork_border: true
+#################################################################################
+#                      VIEWS - LIGHTS                                           #
+#################################################################################
+  - icon: mdi:lightbulb
+    id: lights
+    name: Lights
+    cards:
+      - type: glance
+        show_state: true
+        title: Second Floor
+        column_width: calc(100% / 3)
+        entities:
+          - entity: binary_sensor.bedroom_occupancy
+            name: Bedroom
+          - entity: binary_sensor.office_occupancy
+            name: Office
+          - entity: binary_sensor.guest_room_occupancy
+            name: Guest Room
+      - type: entities
+        show_header_toggle: true
+        entities:
+          - entity: light.bed_ceiling
+            name: Master Bedroom
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.jeremys_night_table
+            name: Jeremys Night Table
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.anyas_night_table
+            name: Anjas Night Table
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.bathroom
+            name: Ensuite
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.bed_closet
+            name: Closet
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.guest_bathroom
+            name: Guest Bathroom
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: switch.guest_room
+          - entity: switch.window_lights
+          - entity: light.den
+            name: Office
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.spotlight
+            name: Office Spotlight
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.upstair_hall_1
+            name: Hallway 1
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.upstair_hall_2
+            name: Hallway 2
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.upstair_hall_3
+            name: Hallway 3
+            hide_when_off: true
+            type: custom:slider-entity-row
+      - type: glance
+        show_state: true
+        title: Main Floor
+        column_width: calc(100% / 3)
+        entities:
+          - entity: binary_sensor.ecobee_occupancy
+            name: Lower Hallway
+          - entity: binary_sensor.kitchen_occupancy
+            name: Living Room
+      - type: entities
+        show_header_toggle: true
+        entities:
+          - entity: light.living_room
+            name: Floor Lamp
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.kitchen
+            name: Kitchen
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.downstairs_hall_1
+            name: Hallway 1
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.downstairs_hall_2
+            name: Hallway 2
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.entrance
+            name: Entrance
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.garage
+            name: Garage
+            hide_when_off: true
+            type: custom:slider-entity-row
+      - type: glance
+        show_state: true
+        title: Basement
+        column_width: calc(100% / 3)
+        entities:
+          - entity: binary_sensor.basement_occupancy
+            name: Basement
+      - type: entities
+        show_header_toggle: true
+        entities:
+          - entity: light.basement_1
+            name: Basement 1
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.basement_2
+            name: Basement 2
+            hide_when_off: true
+            type: custom:slider-entity-row
+          - entity: light.basement_floor_lamp
+            name: Floor Lamp
+            hide_when_off: true
+            type: custom:slider-entity-row
+#################################################################################
+#                      VIEWS - SETTINGS                                         #
+#################################################################################
+  - icon: mdi:settings
+    name: Settings
+    id: settings
+    cards:
+      - type: glance
+        show_state: false
+        title: Settings
+        column_width: calc(100% / 3)
+        entities:
+          - entity: script.restart
+            tap_action: call-service
+            service: script.turn_on
+          - entity: script.reload
+            tap_action: call-service
+            service: script.turn_on
+          - entity: script.force_location
+            tap_action: call-service
+            service: script.turn_on
+          - entity: script.reset_to_defaults
+            tap_action: call-service
+            service: script.turn_on
+          - entity: script.mount_nas
+            tap_action: call-service
+            service: script.turn_on
+          - entity: input_boolean.show_power_saving_suggestions
+            tap_action: toggle
+          - entity: input_boolean.auto_power_save_with_no_presence
+      - type: entities
+        #title: Select
+        show_header_toggle: false
+        entities:
+          - entity: input_boolean.global_announcements
+          - entity: input_boolean.global_notifications
+          - entity: input_select.config
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Climate"
+        card:
+          type: entities
+          title: Climate
+          entities:
+            - entity: input_boolean.change_mode_on_outside_temp
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Themes"
+        card:
+          type: entities
+          title: Themes
+          entities:
+            - entity: input_select.theme
+            - entity: input_boolean.hide_room_glances
+            - entity: input_boolean.switch_theme_at_night
+            - entity: input_select.dark_theme
+            - entity: input_select.light_theme
+            - entity: input_boolean.use_theme_home_away_mode
+            - entity: input_select.home_theme
+            - entity: input_select.away_theme
+            - entity: input_select.sleep_theme
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Scenes (General)"
+        card:
+          type: entities
+          entities:
+            - input_boolean.automate_blinds
+            - input_boolean.smart_home_away_sensing
+            - scene.goodmorning
+            - script.morning_sequence
+            - input_boolean.night_use_guest_room
+            - script.sleep_guest_room
+            - input_boolean.silent_goodnight
+            - input_boolean.sleep_in_mode
+            - input_boolean.do_not_disturb_guest_room
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Media"
+        card:
+          type: entities
+          title: General
+          entities:
+            - entity: input_boolean.power_basement_amp
+            - entity: input_boolean.living_room_start_music_activity
+            - entity: input_boolean.auto_join_surround
+            - entity: input_boolean.living_room_play_music
+            - entity: input_select.options_all_speakers_source
+            - entity: script.refresh_sonos_playlists
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Media"
+        card:
+          type: entities
+          title: Ring Doorbell
+          entities:
+            - entity: input_boolean.ring_door_pause_media
+            - entity: input_boolean.ring_motion_pause_media
+            - entity: input_boolean.restore_music_on_ring
+            - entity: input_number.restore_music_on_ring
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Media"
+        card:
+          type: entities
+          title: Lights
+          entities:
+            - entity: input_number.media_dim_transition
+            - entity: input_number.media_restore_transition
+            - entity: input_boolean.media_lights_living_room
+            - entity: input_number.living_room_dim_lights
+            - entity: input_number.living_room_restore_lights
+            - entity: input_boolean.media_lights_bedroom
+            - entity: input_number.bedroom_dim_lights
+            - entity: input_number.bedroom_restore_lights
+            - entity: input_boolean.media_lights_basement
+            - entity: input_number.basement_dim_lights
+            - entity: input_number.basement_restore_lights
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Scenes (Vacation)"
+        card:
+          type: entities
+          title: Vacation Options
+          entities:
+            - entity: input_boolean.vacation_scene
+            - sensor.vacation_title
+            - input_datetime.vacation_start
+            - input_datetime.vacation_end
+            - sensor.vacation_random_status
+            - input_boolean.vacation_lights
+            - sensor.vacation_lights_start_pm
+            - sensor.vacation_lights_downstairs_off_time
+            - sensor.vacation_lights_upstairs_off_time
+            - sensor.vacation_lights_run_time
+            - input_boolean.vacation_audio
+            - input_select.options_vacation_music
+            - sensor.vacation_music_start_pm
+            - sensor.vacation_music_off_time
+            - sensor.vacation_music_run_time
+
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Scenes (Dinner)"
+        card:
+          type: entities
+          title: Dinner Scene Options
+          entities:
+            - input_boolean.use_basement_speakers
+            - input_boolean.suppress_announcements
+            - input_number.dinner_volume
+            - input_select.options_dinner_music_source
+            - input_select.options_dinner_tv_accent_color
+            - input_select.options_dinner_living_room_color
+            - input_number.options_dinner_living_room_brightness
+            - input_number.options_dinner_dining_room_brightness
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Scenes (Movie)"
+        card:
+          type: entities
+          title: Movie Scene Options
+          entities:
+            - input_number.basement_restore_lights
+            - input_number.options_movie_scene_fireplace
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Scenes (Guest)"
+        card:
+          type: entities
+          title: Guest Scene Options
+          entities:
+            - input_boolean.guest_mode_bedroom
+            - input_boolean.guest_mode_basement
+            - input_select.guest_name
+            - input_text.guest_name
+            - input_select.guest_language
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Calendar"
+        card:
+          type: entities
+          title: Calendar Options
+          entities:
+            - input_number.calendar_buffer
+            - input_number.reminder_to_leave
+            - input_boolean.announce_time_to_leave
+            - input_boolean.display_time_to_leave
+            - input_boolean.meeting_prep_music
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Scenes (Home)"
+        card:
+          type: entities
+          title: Home Scene Options
+          entities:
+            - input_boolean.home_mode_lights
+            - input_boolean.home_mode_media
+            - input_boolean.home_mode_ecobee
+            - input_boolean.automate_blinds
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Scenes (Away)"
+        card:
+          type: entities
+          entities:
+            - input_boolean.away_mode_lights
+            - input_boolean.away_mode_media
+            - input_boolean.away_mode_ecobee
+            - input_boolean.away_power_off_fan
+            - input_boolean.automate_blinds
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Power Saving"
+        card:
+          type: entities
+          title: "Power Saving"
+          entities:
+            - input_number.auto_power_save_timer
+            - input_boolean.auto_power_save_basement
+            - input_boolean.auto_power_save_main_floor
+            - input_boolean.auto_power_save_second_floor
+
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Scenes (Sleep)"
+        card:
+          type: entities
+          title: "Night Sequence Options"
+          entities:
+            - input_number.ideal_sleep_time
+            - input_boolean.night_use_guest_room
+            - input_boolean.night_leave_media_on
+            - input_boolean.night_speech_reminder
+            - input_boolean.night_speech_ecobee
+            - input_boolean.night_speech_forecast
+            - input_boolean.night_speech_calendar
+            - input_boolean.night_ecobee_sleep
+            - input_boolean.night_speech_eight_sleep
+            - input_number.night_volume
+            - input_select.options_night_music
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Scenes (Sleep)"
+        card:
+          type: entities
+          title: "Fan"
+          entities:
+            - input_boolean.dyson_fan_on_temp
+            - input_select.default_fan_speed
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Scenes (Sleep)"
+          - entity: sensor.season
+            state: 'summer'
+        card:
+          type: entities
+          title: "Eight Sleep Summer Settings"
+          entities:
+            - input_boolean.eight_scheduled_right
+            - input_number.eight_scheduled_right_heat_hour
+            - input_number.eight_scheduled_right_heat_min
+            - sensor.eight_scheduled_right_time
+            - input_number.eight_scheduled_right_heat_temp_summer
+            - input_number.eight_scheduled_right_heat_time_summer
+            - input_boolean.eight_scheduled_left
+            - input_number.eight_scheduled_left_heat_hour
+            - input_number.eight_scheduled_left_heat_min
+            - sensor.eight_scheduled_left_time
+            - input_number.eight_scheduled_left_heat_temp_summer
+            - input_number.eight_scheduled_left_heat_time_summer
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Scenes (Sleep)"
+          - entity: sensor.season
+            state: 'autumn'
+        card:
+          type: entities
+          title: "Eight Sleep Autumn Settings"
+          entities:
+            - input_boolean.eight_scheduled_right
+            - input_number.eight_scheduled_right_heat_hour
+            - input_number.eight_scheduled_right_heat_min
+            - sensor.eight_scheduled_right_time
+            - input_number.eight_scheduled_right_heat_temp_autumn
+            - input_number.eight_scheduled_right_heat_time_autumn
+            - input_boolean.eight_scheduled_left
+            - input_number.eight_scheduled_left_heat_hour
+            - input_number.eight_scheduled_left_heat_min
+            - sensor.eight_scheduled_left_time
+            - input_number.eight_scheduled_left_heat_temp_autumn
+            - input_number.eight_scheduled_left_heat_time_autumn
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Scenes (Sleep)"
+          - entity: sensor.season
+            state: 'winter'
+        card:
+          type: entities
+          title: "Eight Sleep Winter Settings"
+          entities:
+            - input_boolean.eight_scheduled_right
+            - input_number.eight_scheduled_right_heat_hour
+            - input_number.eight_scheduled_right_heat_min
+            - sensor.eight_scheduled_right_time
+            - input_number.eight_scheduled_right_heat_temp_winter
+            - input_number.eight_scheduled_right_heat_time_winter
+            - input_boolean.eight_scheduled_left
+            - input_number.eight_scheduled_left_heat_hour
+            - input_number.eight_scheduled_left_heat_min
+            - sensor.eight_scheduled_left_time
+            - input_number.eight_scheduled_left_heat_temp_winter
+            - input_number.eight_scheduled_left_heat_time_winter
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Scenes (Sleep)"
+          - entity: sensor.season
+            state: 'spring'
+        card:
+          type: entities
+          title: "Eight Sleep Summer Settings"
+          entities:
+            - input_boolean.eight_scheduled_right
+            - input_number.eight_scheduled_right_heat_hour
+            - input_number.eight_scheduled_right_heat_min
+            - sensor.eight_scheduled_right_time
+            - input_number.eight_scheduled_right_heat_temp_spring
+            - input_number.eight_scheduled_right_heat_time_spring
+            - input_boolean.eight_scheduled_left
+            - input_number.eight_scheduled_left_heat_hour
+            - input_number.eight_scheduled_left_heat_min
+            - sensor.eight_scheduled_left_time
+            - input_number.eight_scheduled_left_heat_temp_spring
+            - input_number.eight_scheduled_left_heat_time_spring
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Bedroom"
+        card:
+          type: entities
+          title: Auto Climate
+          entities:
+            - input_select.default_fan_speed
+            - input_boolean.dyson_fan_on_temp
+            - input_boolean.eight_on_temp
+            - input_number.bedroom_climate_at_temp
+            - input_number.bedroom_climate_plus_minus
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Bedroom"
+        card:
+          type: vertical-stack
+          cards:
+            - type: entities
+              title: Eight Bed Warmer
+              entities:
+                - input_number.eight_left_heat_temp
+                - input_number.eight_left_heat_time
+                - input_number.eight_right_heat_temp
+                - input_number.eight_right_heat_time
+            - type: entities
+              title: Eight Schedule
+              entities:
+                - input_boolean.eight_scheduled_right
+                - input_number.eight_scheduled_right_heat_hour
+                - input_number.eight_scheduled_right_heat_min
+                - sensor.eight_scheduled_right_time
+                - input_boolean.eight_scheduled_left
+                - input_number.eight_scheduled_left_heat_hour
+                - input_number.eight_scheduled_left_heat_min
+                - sensor.eight_scheduled_left_time
+            - type: conditional
+              conditions:
+                - entity: sensor.season
+                  state: 'summer'
+              card:
+                type: entities
+                title: Summer Schedule
+                entities:
+                  - input_number.eight_scheduled_left_heat_temp_summer
+                  - input_number.eight_scheduled_left_heat_time_summer
+                  - input_number.eight_scheduled_right_heat_temp_summer
+                  - input_number.eight_scheduled_right_heat_time_summer
+            - type: conditional
+              conditions:
+                - entity: sensor.season
+                  state: 'autumn'
+              card:
+                type: entities
+                title: Autumn Schedule
+                entities:
+                  - input_number.eight_scheduled_left_heat_temp_autumn
+                  - input_number.eight_scheduled_left_heat_time_autumn
+                  - input_number.eight_scheduled_right_heat_temp_autumn
+                  - input_number.eight_scheduled_right_heat_time_autumn
+            - type: conditional
+              conditions:
+                - entity: sensor.season
+                  state: 'winter'
+              card:
+                type: entities
+                title: Winter Schedule
+                entities:
+                  - input_number.eight_scheduled_left_heat_temp_winter
+                  - input_number.eight_scheduled_left_heat_time_winter
+                  - input_number.eight_scheduled_right_heat_temp_winter
+                  - input_number.eight_scheduled_right_heat_time_winter
+            - type: conditional
+              conditions:
+                - entity: sensor.season
+                  state: 'spring'
+              card:
+                type: entities
+                title: Spring Schedule
+                entities:
+                  - input_number.eight_scheduled_left_heat_temp_spring
+                  - input_number.eight_scheduled_left_heat_time_spring
+                  - input_number.eight_scheduled_right_heat_temp_spring
+                  - input_number.eight_scheduled_right_heat_time_spring
+            - type: history-graph
+              title: Sleep History
+              hours_to_show: 168
+              entities:
+                - sensor.eight_right_previous_sleep_session
+                - sensor.eight_left_previous_sleep_session
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Scenes (Good Morning)"
+        card:
+          type: entities
+          entities:
+            - input_boolean.automate_blinds
+            - input_boolean.morning_speech_reminder
+            - input_boolean.eight_sleep_score
+            - input_boolean.morning_speech_weather
+            - input_boolean.morning_speech_forecast
+            - input_boolean.morning_speech_calendar
+            - input_boolean.morning_speech_travel
+            - input_boolean.morning_audio
+            - input_boolean.morning_basement
+            - input_boolean.morning_power_off_fan
+            - input_number.good_morning_volume
+            - input_select.options_morning_music
+            - input_number.morning_music_delay
+            - input_boolean.increase_volume
+            - input_boolean.wakeup_attempt
+            - input_number.delay_for_wakeup_attempt
+            - input_boolean.morning_lights
+            - input_number.good_morning_transition
+            - input_number.good_morning_brightness
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Speech"
+        card:
+          type: entities
+          title: Speech Options
+          entities:
+            - input_boolean.global_announcements
+            - input_boolean.use_basement_speakers
+            - input_boolean.announce_intruder_using_sonos
+            - input_number.speech_volume
+            - input_boolean.weather_alerts_sonos
+            - input_boolean.announce_away_mode
+            - input_boolean.announce_medication
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Health"
+        card:
+          type: vertical-stack
+          cards:
+            - type: entities
+              entities:
+                - input_datetime.medication_reminder_date
+                - input_datetime.medication_reminder_time
+                - input_text.medication_reminder_text
+                - input_boolean.announce_medication
+                - sensor.medication_countdown
+                - input_select.medication_reminder
+                - input_boolean.medication_reminder_active
+            - type: history-graph
+              title: Sleep History
+              hours_to_show: 168
+              entities:
+                - sensor.eight_right_previous_sleep_session
+                - sensor.eight_left_previous_sleep_session
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Utilities"
+        card:
+          type: vertical-stack
+          cards:
+            - type: entities
+              title: Downloads
+              entities:
+                - sensor.transmission_status
+                - sensor.transmission_down_speed
+                - sensor.transmission_active_torrents
+                - sensor.transmission_current_status
+            - type: history-graph
+              title: Speed Test
+              hours_to_show: 170
+              entities:
+                - sensor.speedtest_download
+                - sensor.speedtest_upload
+
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Traffic"
+        card:
+          type: entities
+          entities:
+            - sensor.waze_least_traffic_to_work_today
+            - sensor.waze_most_traffic_to_work_today
+            - sensor.waze_start
+            - input_number.waze_start
+            - sensor.waze_stop
+            - input_number.waze_stop
+
+      - type: conditional
+        conditions:
+          - entity: input_select.config
+            state: "Test"
+        card:
+          type: entities
+          entities:
+            - input_boolean.test
+            - input_boolean.test_2
+            - input_boolean.test_3
+            - script.push_test
+            - input_boolean.announcement_running
+            - script.test_night_speech
+            - script.test_morning_speech_1
+            - script.test_morning_speech_2
+            - script.test_morning_speech_3
+            - script.notification_test
+
+#################################################################################
+#                      VIEWS - TESTING                                          #
+#################################################################################
+  # - icon: mdi:hammer
+  #   name: Test Zone
+  #   cards:
